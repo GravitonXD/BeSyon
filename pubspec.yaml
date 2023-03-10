@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   syncfusion_flutter_datepicker: ^20.4.52
   http: ^0.13.5
+  lottie: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -90,3 +91,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  assets:
+    - lib/assets/splash.png
+    - lib/assets/person.json
+    - lib/assets/lifestyle.json
+    - lib/assets/med.json

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:besyon/besyon_colors.dart';
-import 'package:flutter/services.dart';
 import 'package:besyon/besyon_functions.dart';
+import 'package:lottie/lottie.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.title});
@@ -52,9 +52,11 @@ class _HomeState extends State<Home> {
   String bmi = "";
   String bpResults = "";
   String bgResults = "";
+  bool _isButtonDisabled = false;
 
   void _calculateBMI(height, weight) {
-    double _height = double.parse(height);
+    // height in cm, weight in kg
+    double _height = double.parse(height) / 100;
     double _weight = double.parse(weight);
     double _bmi = _weight / (_height * _height);
 
@@ -75,22 +77,36 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void initState() {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         toolbarHeight: MediaQuery.of(context).size.height * 0.075,
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            color: Colors.black,
+        title: Transform.translate(
+          offset: const Offset(20, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "BeSyon",
+                style: TextStyle(
+                  color: BesyonColors.blue,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                "App",
+                style: TextStyle(
+                  color: BesyonColors.purple,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
         centerTitle: true,
@@ -135,6 +151,16 @@ class _HomeState extends State<Home> {
                             bmi = "";
                             bpResults = "";
                             bgResults = "";
+
+                            // reload page
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Home(
+                                  title: 'Besyon',
+                                ),
+                              ),
+                            );
                           });
                         },
                       ),
@@ -167,17 +193,25 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Personal Information
-                  const Center(
+                  Center(
+                    child: Lottie.asset(
+                      'lib/assets/person.json',
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      frameRate: FrameRate(120),
+                    ),
+                  ),
+                  Center(
                     child: Text(
                       "PERSONAL INFORMATION",
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                        color: BesyonColors.blue,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     // Name Input Box
                   ),
+                  _buildDivider(),
                   SizedBox(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -302,7 +336,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    "\tSex Assigned at Birth",
+                                    "\tSex",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 20,
@@ -458,6 +492,8 @@ class _HomeState extends State<Home> {
                                         _calculateBMI(_heightController.text,
                                             _weightController.text);
                                       }
+
+                                      FocusScope.of(context).unfocus();
                                     },
                                     cursorColor: BesyonColors.blue,
                                     controller: _heightController,
@@ -482,7 +518,7 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "in meters",
+                                      hintText: "in centimeters (cm)",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -514,6 +550,8 @@ class _HomeState extends State<Home> {
                                         _calculateBMI(_heightController.text,
                                             _weightController.text);
                                       }
+
+                                      FocusScope.of(context).unfocus();
                                     },
                                     cursorColor: BesyonColors.blue,
                                     controller: _weightController,
@@ -538,7 +576,7 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "in kilograms",
+                                      hintText: "in kilograms (kg)",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -562,13 +600,19 @@ class _HomeState extends State<Home> {
                         _buildDivider(),
                         _buildDivider(),
                         // Lifestyle Information
-                        const Center(
+                        Center(
+                          child: Lottie.asset('lib/assets/lifestyle.json',
+                              height:
+                                  MediaQuery.of(context).size.height * 0.15),
+                        ),
+                        Center(
                           child: Text(
-                            'Lifestyle Information',
+                            'LIFESTYLE INFORMATION',
                             style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                              color: BesyonColors.blue,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ),
 
@@ -590,7 +634,7 @@ class _HomeState extends State<Home> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       _alcoholDrinkerController.text == "Yes"
-                                          ? BesyonColors.blue
+                                          ? BesyonColors.purple
                                           : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -656,36 +700,15 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    "\tHow often do you have a drink containing alcohol?",
+                                    "\tHow often do you drink alcohol?",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  // Drinking Frequency Input Box
-                                  TextField(
-                                    onEditingComplete: () {
-                                      if (_drinkingFrequencyController
-                                          .text.isNotEmpty) {
-                                        // Close Keyboard
-                                        FocusScope.of(context).unfocus();
-                                      }
-                                    },
-                                    cursorColor: BesyonColors.blue,
-                                    controller: _drinkingFrequencyController,
+                                  // Drinking Frequency Dropdown
+                                  DropdownButtonFormField(
                                     decoration: InputDecoration(
-                                      suffixIcon: _drinkingFrequencyController
-                                              .text.isNotEmpty
-                                          ? IconButton(
-                                              icon: const Icon(Icons.clear),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _drinkingFrequencyController
-                                                      .clear();
-                                                });
-                                              },
-                                            )
-                                          : null,
                                       filled: true,
                                       fillColor: BesyonColors.grey,
                                       contentPadding: const EdgeInsets.only(
@@ -694,12 +717,26 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "in drinks",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
+                                    value: BesyonStatic().alcoholFrequency[0],
+                                    items: BesyonStatic()
+                                        .alcoholFrequency
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        _drinkingFrequencyController.text =
+                                            value!;
+                                      });
+                                    },
                                   ),
                                 ],
                               )
@@ -724,7 +761,7 @@ class _HomeState extends State<Home> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       _smokerController.text == "Yes"
-                                          ? BesyonColors.blue
+                                          ? BesyonColors.purple
                                           : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -758,7 +795,7 @@ class _HomeState extends State<Home> {
                                           : Colors.white,
                                   foregroundColor:
                                       _smokerController.text == "Yes"
-                                          ? Colors.white
+                                          ? Colors.purple
                                           : Colors.black,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -781,42 +818,22 @@ class _HomeState extends State<Home> {
                             ),
                           ],
                         ),
+
                         // How many cigarettes a day do you smoke?
                         _smokerController.text == "Yes"
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    "\tHow many cigarettes a day do you smoke?",
+                                    "\tHow often do you drink alcohol?",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  // Smoking Frequency Input Box
-                                  TextField(
-                                    onEditingComplete: () {
-                                      if (_smokingFrequencyController
-                                          .text.isNotEmpty) {
-                                        // Close Keyboard
-                                        FocusScope.of(context).unfocus();
-                                      }
-                                    },
-                                    cursorColor: BesyonColors.blue,
-                                    controller: _smokingFrequencyController,
+                                  // Drinking Frequency Dropdown
+                                  DropdownButtonFormField(
                                     decoration: InputDecoration(
-                                      suffixIcon: _smokingFrequencyController
-                                              .text.isNotEmpty
-                                          ? IconButton(
-                                              icon: const Icon(Icons.clear),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _smokingFrequencyController
-                                                      .clear();
-                                                });
-                                              },
-                                            )
-                                          : null,
                                       filled: true,
                                       fillColor: BesyonColors.grey,
                                       contentPadding: const EdgeInsets.only(
@@ -825,12 +842,26 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "in cigarettes",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
+                                    value: BesyonStatic().smokingFrequency[0],
+                                    items: BesyonStatic()
+                                        .smokingFrequency
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        _smokingFrequencyController.text =
+                                            value!;
+                                      });
+                                    },
                                   ),
                                 ],
                               )
@@ -854,7 +885,7 @@ class _HomeState extends State<Home> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       _sedentaryController.text == "Yes"
-                                          ? BesyonColors.blue
+                                          ? BesyonColors.purple
                                           : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -916,13 +947,21 @@ class _HomeState extends State<Home> {
                         _buildDivider(),
                         _buildDivider(),
                         // Medical Examination
-                        const Center(
+                        Center(
+                          child: Lottie.asset(
+                            'lib/assets/med.json',
+                            height: MediaQuery.of(context).size.height * 0.15,
+                            frameRate: FrameRate(120),
+                          ),
+                        ),
+                        Center(
                           child: Text(
-                            'Medical Examination',
+                            'MEDICAL EXAMINATION',
                             style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                              color: BesyonColors.blue,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ),
 
@@ -933,12 +972,13 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Blood Pressure
-                            const Text(
+                            Text(
                               "\tBlood Pressure",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold),
+                                color: BesyonColors.purple,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                             // Systolic / Diastolic Input Boxes
                             Row(
@@ -950,6 +990,20 @@ class _HomeState extends State<Home> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.40,
                                   child: TextField(
+                                    onEditingComplete: () {
+                                      if (_bpSystolicController
+                                              .text.isNotEmpty &&
+                                          _bpDiastolicController
+                                              .text.isNotEmpty) {
+                                        setState(() {
+                                          bpResults = BesyonFunctions()
+                                              .bpResults(
+                                                  _bpSystolicController.text,
+                                                  _bpDiastolicController.text);
+                                        });
+                                      }
+                                      FocusScope.of(context).unfocus();
+                                    },
                                     cursorColor: BesyonColors.blue,
                                     controller: _bpSystolicController,
                                     decoration: InputDecoration(
@@ -962,6 +1016,7 @@ class _HomeState extends State<Home> {
                                                       () {
                                                         _bpSystolicController
                                                             .clear();
+                                                        bpResults = "";
                                                       },
                                                     );
                                                   },
@@ -975,7 +1030,7 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "Systolic",
+                                      hintText: "Systolic in mmHg",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -997,6 +1052,20 @@ class _HomeState extends State<Home> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.40,
                                   child: TextField(
+                                    onEditingComplete: () {
+                                      if (_bpSystolicController
+                                              .text.isNotEmpty &&
+                                          _bpDiastolicController
+                                              .text.isNotEmpty) {
+                                        setState(() {
+                                          bpResults = BesyonFunctions()
+                                              .bpResults(
+                                                  _bpSystolicController.text,
+                                                  _bpDiastolicController.text);
+                                        });
+                                      }
+                                      FocusScope.of(context).unfocus();
+                                    },
                                     cursorColor: BesyonColors.blue,
                                     controller: _bpDiastolicController,
                                     decoration: InputDecoration(
@@ -1009,6 +1078,7 @@ class _HomeState extends State<Home> {
                                                       () {
                                                         _bpDiastolicController
                                                             .clear();
+                                                        bpResults = "";
                                                       },
                                                     );
                                                   },
@@ -1022,7 +1092,7 @@ class _HomeState extends State<Home> {
                                         top: 5,
                                         bottom: 5,
                                       ),
-                                      hintText: "Diastolic",
+                                      hintText: "Diastolic in mmHg",
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide.none,
@@ -1037,17 +1107,29 @@ class _HomeState extends State<Home> {
 
                         // BP Results
                         bpResults.isNotEmpty
-                            ? Column(
+                            ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // BP Results
                                   Text(
-                                    bpResults,
+                                    '\t$bpResults : ',
                                     style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  // BP Results Interpretation
+                                  Flexible(
+                                    child: Text(
+                                      BesyonFunctions().bpInterpretation(
+                                        bpResults,
+                                      ),
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal),
+                                    ),
                                   ),
                                 ],
                               )
@@ -1212,12 +1294,12 @@ class _HomeState extends State<Home> {
 
                   _buildDivider(),
                   // Blood Glucose (bg)
-                  const Text(
+                  Text(
                     "\tBlood Glucose",
                     style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
+                        color: BesyonColors.purple,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900),
                   ),
                   // Blood Glucose Input Box
                   SizedBox(
@@ -1268,16 +1350,30 @@ class _HomeState extends State<Home> {
 
                   // Blood Glucose Results
                   bgResults.isNotEmpty
-                      ? Text(
-                          bgResults,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
-                          ),
+                      ? Row(
+                          children: [
+                            Text(
+                              '\t$bgResults : ',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                BesyonFunctions().bgInterpretation(bgResults),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ],
                         )
                       : const Text(
-                          "Enter your blood glucose level",
+                          "Enter blood glucose level",
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -1441,50 +1537,141 @@ class _HomeState extends State<Home> {
 
           // Submit Button
           Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+            ),
             width: MediaQuery.of(context).size.width,
             height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                BesyonFunctions().submitForm(
-                    _nameController.text,
-                    _dateOfBirthController.text,
-                    _sexController.text,
-                    _incomeBracketController.text,
-                    _contactNumberController.text,
-                    _heightController.text,
-                    _weightController.text,
-                    "bmi",
-                    "bmiCategory",
-                    _alcoholDrinkerController.text,
-                    _drinkingFrequencyController.text,
-                    _smokerController.text,
-                    _smokingFrequencyController.text,
-                    _sedentaryController.text,
-                    _bpSystolicController.text,
-                    _bpDiastolicController.text,
-                    _bpDateController.text,
-                    _bpTimeController.text,
-                    bpResults,
-                    _bgController.text,
-                    _bgDateController.text,
-                    _bgTimeController.text,
-                    bgResults);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: BesyonColors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            child: !_isButtonDisabled
+                ? ElevatedButton(
+                    onPressed: () {
+                      // Check if all fields are filled
+                      if (_nameController.text.isNotEmpty &&
+                              _dateOfBirthController.text.isNotEmpty &&
+                              _sexController.text.isNotEmpty &&
+                              _incomeBracketController.text.isNotEmpty &&
+                              _contactNumberController.text.isNotEmpty &&
+                              _heightController.text.isNotEmpty &&
+                              _weightController.text.isNotEmpty &&
+                              _alcoholDrinkerController.text.isNotEmpty ||
+                          _drinkingFrequencyController.text.isNotEmpty &&
+                              _smokerController.text.isNotEmpty ||
+                          _smokingFrequencyController.text.isNotEmpty &&
+                              _sedentaryController.text.isNotEmpty &&
+                              _bpSystolicController.text.isNotEmpty &&
+                              _bpDiastolicController.text.isNotEmpty &&
+                              _bpDateController.text.isNotEmpty &&
+                              _bpTimeController.text.isNotEmpty &&
+                              _bgController.text.isNotEmpty &&
+                              _bgDateController.text.isNotEmpty &&
+                              _bgTimeController.text.isNotEmpty) {
+                        // Disables the button
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        BesyonFunctions().submitForm(
+                            _nameController.text,
+                            _dateOfBirthController.text,
+                            _sexController.text,
+                            _incomeBracketController.text,
+                            _contactNumberController.text,
+                            _heightController.text,
+                            _weightController.text,
+                            _alcoholDrinkerController.text,
+                            _drinkingFrequencyController.text,
+                            _smokerController.text,
+                            _smokingFrequencyController.text,
+                            _sedentaryController.text,
+                            _bpSystolicController.text,
+                            _bpDiastolicController.text,
+                            _bpDateController.text,
+                            _bpTimeController.text,
+                            bpResults,
+                            _bgController.text,
+                            _bgDateController.text,
+                            _bgTimeController.text,
+                            bgResults);
+
+                        // Show SnackBar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Form Submitted"),
+                          ),
+                        );
+
+                        // Clear all fields
+                        _nameController.clear();
+                        _dateOfBirthController.clear();
+                        _sexController.clear();
+                        _incomeBracketController.clear();
+                        _contactNumberController.clear();
+                        _heightController.clear();
+                        _weightController.clear();
+                        _alcoholDrinkerController.clear();
+                        _drinkingFrequencyController.clear();
+                        _smokerController.clear();
+                        _smokingFrequencyController.clear();
+                        _sedentaryController.clear();
+                        _bpSystolicController.clear();
+                        _bpDiastolicController.clear();
+                        _bpDateController.clear();
+                        _bpTimeController.clear();
+                        _bgController.clear();
+                        _bgDateController.clear();
+                        _bgTimeController.clear();
+
+                        setState(() {
+                          bpResults = "";
+                          bgResults = "";
+                          bmi = "";
+
+                          // reload page
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(
+                                title: 'Besyon',
+                              ),
+                            ),
+                          );
+                        });
+                      }
+
+                      // Show SnackBar if not all fields are filled
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please fill in all fields"),
+                          ),
+                        );
+                      }
+
+                      // Re-enable the button
+                      setState(() {
+                        _isButtonDisabled = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: BesyonColors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Submit",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: CircularProgressIndicator(
+                      color: BesyonColors.blue,
+                    ),
+                  ),
           ),
         ],
       ),

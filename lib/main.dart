@@ -1,4 +1,5 @@
 import 'package:besyon/home.dart';
+import 'package:besyon/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,7 +20,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Home(title: 'BeSyon App'),
+      home: const LoadingScreen(),
+      routes: {
+        '/home': (context) => const Home(
+              title: 'BeSyon App',
+            ),
+      },
     );
   }
 }
