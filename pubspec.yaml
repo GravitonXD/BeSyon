@@ -38,6 +38,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^20.4.52
   http: ^0.13.5
   lottie: ^1.0.0
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:
@@ -94,6 +95,7 @@ flutter:
 
   assets:
     - lib/assets/splash.png
+    - lib/assets/logo.png
     - lib/assets/person.json
     - lib/assets/lifestyle.json
     - lib/assets/med.json

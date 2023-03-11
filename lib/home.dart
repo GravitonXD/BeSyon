@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:besyon/besyon_colors.dart';
 import 'package:besyon/besyon_functions.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.title});
@@ -76,6 +77,15 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +99,40 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Make logo tappable
+              GestureDetector(
+                onDoubleTap: () {
+                  // Show Contact Developer (John Markton Olart, email: jmolarte@up.edu.ph)
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Contact Developer"),
+                          content: TextButton(
+                            child: const Text("John Markton Olarte",
+                                style: TextStyle(color: Colors.blue)),
+                            onPressed: () {
+                              // Open email app
+                              _launchInBrowser(
+                                  Uri.parse("mailto:jmolarte@up.edu.ph"));
+                            },
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text("Close"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+                child: Image.asset(
+                  "lib/assets/logo.png",
+                  width: 30,
+                ),
+              ),
               Text(
                 "BeSyon",
                 style: TextStyle(
@@ -196,7 +240,7 @@ class _HomeState extends State<Home> {
                   Center(
                     child: Lottie.asset(
                       'lib/assets/person.json',
-                      height: MediaQuery.of(context).size.height * 0.15,
+                      width: MediaQuery.of(context).size.width,
                       frameRate: FrameRate(120),
                     ),
                   ),
@@ -602,8 +646,7 @@ class _HomeState extends State<Home> {
                         // Lifestyle Information
                         Center(
                           child: Lottie.asset('lib/assets/lifestyle.json',
-                              height:
-                                  MediaQuery.of(context).size.height * 0.15),
+                              width: MediaQuery.of(context).size.width),
                         ),
                         Center(
                           child: Text(
@@ -950,7 +993,7 @@ class _HomeState extends State<Home> {
                         Center(
                           child: Lottie.asset(
                             'lib/assets/med.json',
-                            height: MediaQuery.of(context).size.height * 0.15,
+                            width: MediaQuery.of(context).size.width,
                             frameRate: FrameRate(120),
                           ),
                         ),
@@ -1545,7 +1588,7 @@ class _HomeState extends State<Home> {
             height: 50,
             child: !_isButtonDisabled
                 ? ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Check if all fields are filled
                       if (_nameController.text.isNotEmpty &&
                               _dateOfBirthController.text.isNotEmpty &&
@@ -1570,79 +1613,128 @@ class _HomeState extends State<Home> {
                         setState(() {
                           _isButtonDisabled = true;
                         });
-                        BesyonFunctions().submitForm(
-                            _nameController.text,
-                            _dateOfBirthController.text,
-                            _sexController.text,
-                            _incomeBracketController.text,
-                            _contactNumberController.text,
-                            _heightController.text,
-                            _weightController.text,
-                            _alcoholDrinkerController.text,
-                            _drinkingFrequencyController.text,
-                            _smokerController.text,
-                            _smokingFrequencyController.text,
-                            _sedentaryController.text,
-                            _bpSystolicController.text,
-                            _bpDiastolicController.text,
-                            _bpDateController.text,
-                            _bpTimeController.text,
-                            bpResults,
-                            _bgController.text,
-                            _bgDateController.text,
-                            _bgTimeController.text,
-                            bgResults);
 
-                        // Show SnackBar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Form Submitted"),
-                          ),
-                        );
+                        try {
+                          var success = await BesyonFunctions().submitForm(
+                              _nameController.text,
+                              _dateOfBirthController.text,
+                              _sexController.text,
+                              _incomeBracketController.text,
+                              _contactNumberController.text,
+                              _heightController.text,
+                              _weightController.text,
+                              _alcoholDrinkerController.text,
+                              _drinkingFrequencyController.text,
+                              _smokerController.text,
+                              _smokingFrequencyController.text,
+                              _sedentaryController.text,
+                              _bpSystolicController.text,
+                              _bpDiastolicController.text,
+                              _bpDateController.text,
+                              _bpTimeController.text,
+                              bpResults,
+                              _bgController.text,
+                              _bgDateController.text,
+                              _bgTimeController.text,
+                              bgResults);
 
-                        // Clear all fields
-                        _nameController.clear();
-                        _dateOfBirthController.clear();
-                        _sexController.clear();
-                        _incomeBracketController.clear();
-                        _contactNumberController.clear();
-                        _heightController.clear();
-                        _weightController.clear();
-                        _alcoholDrinkerController.clear();
-                        _drinkingFrequencyController.clear();
-                        _smokerController.clear();
-                        _smokingFrequencyController.clear();
-                        _sedentaryController.clear();
-                        _bpSystolicController.clear();
-                        _bpDiastolicController.clear();
-                        _bpDateController.clear();
-                        _bpTimeController.clear();
-                        _bgController.clear();
-                        _bgDateController.clear();
-                        _bgTimeController.clear();
+                          if (success) {
+                            // Show SnackBar
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                closeIconColor: Colors.white,
+                                showCloseIcon: true,
+                                backgroundColor: BesyonColors.blue,
+                                content: const Text(
+                                  "Form Submitted",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
 
-                        setState(() {
-                          bpResults = "";
-                          bgResults = "";
-                          bmi = "";
+                            // Clear all fields
+                            _nameController.clear();
+                            _dateOfBirthController.clear();
+                            _sexController.clear();
+                            _incomeBracketController.clear();
+                            _contactNumberController.clear();
+                            _heightController.clear();
+                            _weightController.clear();
+                            _alcoholDrinkerController.clear();
+                            _drinkingFrequencyController.clear();
+                            _smokerController.clear();
+                            _smokingFrequencyController.clear();
+                            _sedentaryController.clear();
+                            _bpSystolicController.clear();
+                            _bpDiastolicController.clear();
+                            _bpDateController.clear();
+                            _bpTimeController.clear();
+                            _bgController.clear();
+                            _bgDateController.clear();
+                            _bgTimeController.clear();
 
-                          // reload page
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Home(
-                                title: 'Besyon',
+                            setState(() {
+                              bpResults = "";
+                              bgResults = "";
+                              bmi = "";
+
+                              // reload page
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Home(
+                                    title: 'Besyon',
+                                  ),
+                                ),
+                              );
+                            });
+                          } else {
+                            // Show SnackBar
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                showCloseIcon: true,
+                                closeIconColor: Colors.white,
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "Error Submitting Form, Please Try Again",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          // Show SnackBar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              showCloseIcon: true,
+                              closeIconColor: Colors.white,
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                "Error Submitting Form, Please Try Again",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           );
-                        });
+                        }
                       }
 
                       // Show SnackBar if not all fields are filled
                       else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Please fill in all fields"),
+                            showCloseIcon: true,
+                            closeIconColor: Colors.white,
+                            backgroundColor: Colors.red,
+                            content: Text(
+                              "Please Fill All Fields",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         );
                       }

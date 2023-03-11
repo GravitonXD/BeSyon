@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -113,20 +115,24 @@ class BesyonFunctions {
     double bmi = bmiCalculator(double.parse(height), double.parse(weight));
     // Determine BMI Classification
     String bmiClassification = bmiClassifier(bmi);
-    const String scriptURL =
-        'https://script.google.com/a/macros/up.edu.ph/s/AKfycbxQy7W2u6AABB3hBE_IXiRLvs7PZKj6jEviA_h-ZG7kFfA0Xwc5d1p-mEkjsib2ebkzJg/exec';
 
-    String queryString =
-        "?name=$name&dateOfBirth=$dateOfBirth&sex=$sex&incomeBracket=$incomeBracket&contactNumber=$contactNumber&height=$height&weight=$weight&bmi=$bmi&bmiClassification=$bmiClassification&alcoholDrinker=$alcoholDrinker&drinkingFrequency=$drinkingFrequency&smoker=$smoker&smokingFrequency=$smokingFrequency&sedentary=$sedentary&bpSystolic=$bpSystolic&bpDiastolic=$bpDiastolic&bpDate=$bpDate&bpTime=$bpTime&bpResults=$bpResults&bg=$bg&bgDate=$bgDate&bgTime=$bgTime&bgResults=$bgResults";
+    try {
+      const String scriptURL =
+          'https://script.google.com/macros/s/AKfycbzefpCZJsyVKz8BhJ-QiXRq7N2yLSsdfCK5Jg6D9w71hfkmoTObxFYq5MwA4sNFlVAy8A/exec';
 
-    var finalURI = Uri.parse(scriptURL + queryString);
-    print(finalURI);
-    var response = await http.get(finalURI);
-    //print(finalURI);
+      String queryString =
+          "?name=$name&dateOfBirth=$dateOfBirth&sex=$sex&incomeBracket=$incomeBracket&contactNumber=$contactNumber&height=$height&weight=$weight&bmi=$bmi&bmiClassification=$bmiClassification&alcoholDrinker=$alcoholDrinker&drinkingFrequency=$drinkingFrequency&smoker=$smoker&smokingFrequency=$smokingFrequency&sedentary=$sedentary&bpSystolic=$bpSystolic&bpDiastolic=$bpDiastolic&bpDate=$bpDate&bpTime=$bpTime&bpResults=$bpResults&bg=$bg&bgDate=$bgDate&bgTime=$bgTime&bgResults=$bgResults";
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
+      var finalURI = Uri.parse(scriptURL + queryString);
+      var response = await http.get(finalURI);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        // If the server did not return a 200 OK response, then throw an exception.
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
