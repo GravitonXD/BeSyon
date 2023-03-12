@@ -5,34 +5,46 @@ import 'dart:convert' as convert;
 
 class BesyonFunctions {
   String bpResults(systolic, diastolic) {
-    var _systolic = int.parse(systolic);
-    var _diastolic = int.parse(diastolic);
-    // Blood Pressure Results
-    // Normal: < 120/80 mmHg
-    // Borderline: 120-139/80-89 mmHg
-    // Hypertension: > 140/90 mmHg
+    var _systolic = double.parse(systolic);
+    var _diastolic = double.parse(diastolic);
+    // Blood Pressure Results based from American Heart Association
+    // Hypotensive: < 90/60 mmHg
+    // Normal: less than 120 and less than 80
+    // Elevated: (120-129) and less than 80
+    // Hypertension I: (130-139) or (80-89)
+    // Hypertension II: (140-180) or (90-120)
+    // Hypertensive Crisis: > 180 or > 120
 
-    if (_systolic <= 120 && _diastolic <= 80) {
+    if (_systolic < 90 && _diastolic < 60) {
+      return "Hypotensive";
+    } else if (_systolic < 120 && _diastolic < 80) {
       return "Normal";
-    } else if (_systolic > 120 &&
-        _systolic <= 139 &&
-        _diastolic > 80 &&
-        _diastolic <= 89) {
-      return "Borderline";
-    } else if (_systolic >= 140 && _diastolic >= 90) {
-      return "Hypertension";
+    } else if (_systolic >= 120 && _systolic <= 129 && _diastolic < 80) {
+      return "Elevated";
+    } else if ((_systolic >= 130 && _systolic <= 139) ||
+        (_diastolic >= 80 && _diastolic <= 89)) {
+      return "Hypertension I";
+    } else if ((_systolic >= 140 && _systolic <= 180) ||
+        (_diastolic >= 90 && _diastolic <= 120)) {
+      return "Hypertension II";
+    } else if (_systolic > 180 || _diastolic > 120) {
+      return "Hypertensive Crisis";
     } else {
       return "Invalid Entry";
     }
   }
 
   String bpInterpretation(bpRes) {
-    if (bpRes == "Normal") {
+    if (bpRes == "Hypotensive") {
+      return "Let’s check your blood pressure again..";
+    } else if (bpRes == "Normal") {
       return "Your blood pressure is normal.";
     } else if (bpRes == "Elevated") {
-      return "Your blood pressure is borderline. Maintain a healthy lifestyle.";
-    } else if (bpRes == "Hypertension") {
+      return "Your blood pressure is elevated. Maintain a healthy lifestyle.";
+    } else if (bpRes == "Hypertension I" || bpRes == "Hypertension II") {
       return "You are hypertensive. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
+    } else if (bpRes == "Hypertensive Crisis") {
+      return "Consult your doctor immediately.";
     } else {
       return "Systolic and diastolic values are invalid.";
     }

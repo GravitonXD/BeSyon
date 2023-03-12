@@ -633,12 +633,81 @@ class _HomeState extends State<Home> {
                           ],
                         ),
 
-                        _buildDivider(),
+                        // Calculate BMI Button (with snackbar if there is no input, only weight or only height)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BesyonColors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_heightController.text.isNotEmpty &&
+                                _weightController.text.isNotEmpty) {
+                              setState(() {
+                                _calculateBMI(_heightController.text,
+                                    _weightController.text);
+                              });
+                            } else if (_heightController.text.isEmpty &&
+                                _weightController.text.isNotEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter height (cm) value",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else if (_heightController.text.isNotEmpty &&
+                                _weightController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter weight (kg) value",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter height and weight values",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                            FocusScope.of(context).unfocus();
+                          },
+                          child: const Text(
+                            "Calculate BMI",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
 
                         // BMI
                         bmi != ""
-                            ? Text("BMI: $bmi")
-                            : Text("Enter height and weight to calculate BMI"),
+                            ? Text(bmi)
+                            : const Text(
+                                "Enter height and weight to calculate BMI"),
 
                         _buildDivider(),
                         _buildDivider(),
@@ -1148,6 +1217,77 @@ class _HomeState extends State<Home> {
                           ],
                         ),
 
+                        // Calculate BP Results (Button)
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: BesyonColors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_bpSystolicController.text.isNotEmpty &&
+                                _bpDiastolicController.text.isNotEmpty) {
+                              setState(() {
+                                bpResults = BesyonFunctions().bpResults(
+                                    _bpSystolicController.text,
+                                    _bpDiastolicController.text);
+                              });
+                            } else if (_bpSystolicController.text.isEmpty &&
+                                _bpDiastolicController.text.isNotEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter Systolic BP value",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else if (_bpSystolicController.text.isNotEmpty &&
+                                _bpDiastolicController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter Diastolic BP value",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  closeIconColor: Colors.white,
+                                  showCloseIcon: true,
+                                  content: Text(
+                                    "Please enter Systolic and Diastolic BP values",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                            FocusScope.of(context).unfocus();
+                          },
+                          child: const Text(
+                            "Calculate",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+
                         // BP Results
                         bpResults.isNotEmpty
                             ? Row(
@@ -1387,6 +1527,45 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
                         ),
+                      ),
+                    ),
+                  ),
+
+                  // Blood Glucose Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: BesyonColors.purple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_bgController.text.isNotEmpty) {
+                        setState(() {
+                          bgResults = BesyonFunctions()
+                              .bgResults(int.parse(_bgController.text));
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            closeIconColor: Colors.white,
+                            showCloseIcon: true,
+                            content: Text(
+                              "Please enter blood glucose value",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: const Text(
+                      "Calculate",
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -1644,10 +1823,14 @@ class _HomeState extends State<Home> {
                               SnackBar(
                                 closeIconColor: Colors.white,
                                 showCloseIcon: true,
-                                backgroundColor: BesyonColors.blue,
+                                backgroundColor: BesyonColors.purple,
                                 content: const Text(
                                   "Form Submitted",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             );
