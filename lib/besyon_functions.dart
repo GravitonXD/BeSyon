@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'package:besyon/file_provider.dart';
 
 class BesyonFunctions {
   String bpResults(systolic, diastolic) {
@@ -141,10 +141,17 @@ class BesyonFunctions {
       if (response.statusCode == 200) {
         return true;
       } else {
-        // If the server did not return a 200 OK response, then throw an exception.
+        // If the server did not return a 200 OK response, save it locally to "data_to_add.txt"
+        var file = FileProvider("data_to_add.txt");
+
+        // Append to file the data
+        file.writeFile(
+            "$name,$dateOfBirth,$sex,$incomeBracket,$contactNumber,$height,$weight,$bmi,$bmiClassification,$alcoholDrinker,$drinkingFrequency,$smoker,$smokingFrequency,$sedentary,$bpSystolic,$bpDiastolic,$bpDate,$bpTime,$bpResults,$bg,$bgDate,$bgTime,$bgResults\n");
+
         return false;
       }
     } catch (e) {
+      // If the server did not return a 200 OK response, save it locally to "data_to_add.txt"
       return false;
     }
   }

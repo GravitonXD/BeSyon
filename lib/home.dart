@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:besyon/besyon_colors.dart';
 import 'package:besyon/besyon_functions.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:besyon/file_provider.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.title});
@@ -14,6 +17,56 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  // Init State
+  // Check if there is a data_to_add.txt file
+  // If there is submit the data to Google Sheets using submit form function
+  // If there is no data_to_add.txt file, do nothing
+  // If the data was uploaded successfully, delete the data_to_add.txt file
+  // If the data was not uploaded successfully, do nothing
+  @override
+  Future<void> initState() async {
+    super.initState();
+
+    // Get local file path directory
+    var to_add = FileProvider("to_add_data.txt");
+
+    var test_connection = await http.get(Uri.parse("http://google.com"));
+
+    if (await to_add.fileExists() && test_connection.statusCode == 200) {
+      // Open file if it exists, and go through each line
+      for (var line in to_add.readFile().toString().split("\n")) {
+        List<dynamic> temp_data = [];
+        temp_data = line.split(",");
+        // Submit the data to Google Sheets
+        if (await BesyonFunctions().submitForm(
+            temp_data[0],
+            temp_data[1],
+            temp_data[2],
+            temp_data[3],
+            temp_data[4],
+            temp_data[5],
+            temp_data[6],
+            temp_data[7],
+            temp_data[8],
+            temp_data[9],
+            temp_data[10],
+            temp_data[11],
+            temp_data[12],
+            temp_data[13],
+            temp_data[14],
+            temp_data[15],
+            temp_data[16],
+            temp_data[17],
+            temp_data[18],
+            temp_data[19],
+            temp_data[20])) {
+          // Delete the file if the data was uploaded successfully
+          to_add.writeFile("");
+        }
+      }
+    }
+  }
+
   _buildDivider() {
     return const Divider(
       height: 20,
@@ -1874,18 +1927,55 @@ class _HomeState extends State<Home> {
                           } else {
                             // Show SnackBar
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
+                              SnackBar(
                                 showCloseIcon: true,
                                 closeIconColor: Colors.white,
-                                backgroundColor: Colors.red,
-                                content: Text(
-                                  "Error Submitting Form, Please Try Again",
+                                backgroundColor: BesyonColors.purple,
+                                content: const Text(
+                                  "Data was stored locally, it will be uploaded when you have an internet connection",
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
                             );
+
+                            // Clear all fields
+                            _nameController.clear();
+                            _dateOfBirthController.clear();
+                            _sexController.clear();
+                            _incomeBracketController.clear();
+                            _contactNumberController.clear();
+                            _heightController.clear();
+                            _weightController.clear();
+                            _alcoholDrinkerController.clear();
+                            _drinkingFrequencyController.clear();
+                            _smokerController.clear();
+                            _smokingFrequencyController.clear();
+                            _sedentaryController.clear();
+                            _bpSystolicController.clear();
+                            _bpDiastolicController.clear();
+                            _bpDateController.clear();
+                            _bpTimeController.clear();
+                            _bgController.clear();
+                            _bgDateController.clear();
+                            _bgTimeController.clear();
+
+                            setState(() {
+                              bpResults = "";
+                              bgResults = "";
+                              bmi = "";
+
+                              // reload page
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Home(
+                                    title: 'Besyon',
+                                  ),
+                                ),
+                              );
+                            });
                           }
                         } catch (e) {
                           // Show SnackBar
