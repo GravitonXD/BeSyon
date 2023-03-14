@@ -36,13 +36,15 @@ class BesyonFunctions {
 
   String bpInterpretation(bpRes) {
     if (bpRes == "Hypotensive") {
-      return "Let’s check your blood pressure again..";
+      return "Let’s check your blood pressure again.";
     } else if (bpRes == "Normal") {
-      return "Your blood pressure is normal.";
+      return "Your blood pressure level is within normal";
     } else if (bpRes == "Elevated") {
-      return "Your blood pressure is elevated. Maintain a healthy lifestyle.";
-    } else if (bpRes == "Hypertension I" || bpRes == "Hypertension II") {
-      return "You are hypertensive. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
+      return "Your blood pressure is within the elevated range. Maintain a healthy lifestyle..";
+    } else if (bpRes == "Hypertension I") {
+      return "Your blood pressure is in hypertension 1 range. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
+    } else if (bpRes == "Hypertension II") {
+      return "Your blood pressure is in hypertension 2 range. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
     } else if (bpRes == "Hypertensive Crisis") {
       return "Consult your doctor immediately.";
     } else {
@@ -69,11 +71,11 @@ class BesyonFunctions {
 
   String bgInterpretation(bgRes) {
     if (bgRes == "Normal") {
-      return "Your blood glucose is normal.";
+      return "Your blood glucose levels are within normal.";
     } else if (bgRes == "Prediabetes") {
-      return "You have prediabetes. Maintain a healthy lifestyle.";
+      return "Your blood glucose levels are within the prediabetes range. Maintain a healthy lifestyle.";
     } else if (bgRes == "Diabetes") {
-      return "You are diabetic. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
+      return "Your blood glucose levels are within the diabetes range. Make sure to take your maintenance medicine/s and maintain a healthy lifestyle.";
     } else {
       return "Blood glucose value is invalid.";
     }
@@ -141,17 +143,17 @@ class BesyonFunctions {
       if (response.statusCode == 200) {
         return true;
       } else {
-        // If the server did not return a 200 OK response, save it locally to "data_to_add.txt"
-        var file = FileProvider("data_to_add.txt");
-
         // Append to file the data
-        file.writeFile(
+        FileAddressProvider().writeFile(
             "$name,$dateOfBirth,$sex,$incomeBracket,$contactNumber,$height,$weight,$bmi,$bmiClassification,$alcoholDrinker,$drinkingFrequency,$smoker,$smokingFrequency,$sedentary,$bpSystolic,$bpDiastolic,$bpDate,$bpTime,$bpResults,$bg,$bgDate,$bgTime,$bgResults\n");
 
         return false;
       }
     } catch (e) {
       // If the server did not return a 200 OK response, save it locally to "data_to_add.txt"
+      // Get local file path directory
+      FileAddressProvider().writeFile(
+          "$name,$dateOfBirth,$sex,$incomeBracket,$contactNumber,$height,$weight,$bmi,$bmiClassification,$alcoholDrinker,$drinkingFrequency,$smoker,$smokingFrequency,$sedentary,$bpSystolic,$bpDiastolic,$bpDate,$bpTime,$bpResults,$bg,$bgDate,$bgTime,$bgResults\n");
       return false;
     }
   }

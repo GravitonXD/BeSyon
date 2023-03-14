@@ -17,54 +17,48 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // Init State
-  // Check if there is a data_to_add.txt file
-  // If there is submit the data to Google Sheets using submit form function
-  // If there is no data_to_add.txt file, do nothing
-  // If the data was uploaded successfully, delete the data_to_add.txt file
-  // If the data was not uploaded successfully, do nothing
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
 
-    // Get local file path directory
-    var to_add = FileProvider("to_add_data.txt");
-
-    var test_connection = await http.get(Uri.parse("http://google.com"));
-
-    if (await to_add.fileExists() && test_connection.statusCode == 200) {
-      // Open file if it exists, and go through each line
-      for (var line in to_add.readFile().toString().split("\n")) {
-        List<dynamic> temp_data = [];
-        temp_data = line.split(",");
-        // Submit the data to Google Sheets
-        if (await BesyonFunctions().submitForm(
-            temp_data[0],
-            temp_data[1],
-            temp_data[2],
-            temp_data[3],
-            temp_data[4],
-            temp_data[5],
-            temp_data[6],
-            temp_data[7],
-            temp_data[8],
-            temp_data[9],
-            temp_data[10],
-            temp_data[11],
-            temp_data[12],
-            temp_data[13],
-            temp_data[14],
-            temp_data[15],
-            temp_data[16],
-            temp_data[17],
-            temp_data[18],
-            temp_data[19],
-            temp_data[20])) {
-          // Delete the file if the data was uploaded successfully
-          to_add.writeFile("");
+    Future<void> uploadData() async {
+      if (await FileAddressProvider().fileExists()) {
+        // Open file if it exists, and go through each line
+        for (var line
+            in FileAddressProvider().readFile().toString().split("\n")) {
+          List<dynamic> temp_data = [];
+          temp_data = line.split(",");
+          // Submit the data to Google Sheets
+          if (await BesyonFunctions().submitForm(
+              temp_data[0],
+              temp_data[1],
+              temp_data[2],
+              temp_data[3],
+              temp_data[4],
+              temp_data[5],
+              temp_data[6],
+              temp_data[7],
+              temp_data[8],
+              temp_data[9],
+              temp_data[10],
+              temp_data[11],
+              temp_data[12],
+              temp_data[13],
+              temp_data[14],
+              temp_data[15],
+              temp_data[16],
+              temp_data[17],
+              temp_data[18],
+              temp_data[19],
+              temp_data[20])) {
+            // Delete the file if the data was uploaded successfully
+            FileAddressProvider().deleteFile();
+          }
         }
       }
     }
+
+    uploadData();
   }
 
   _buildDivider() {
@@ -480,7 +474,7 @@ class _HomeState extends State<Home> {
 
                         // Income Bracket Input Box
                         const Text(
-                          "\tIncome Bracket",
+                          "\tAnnual Income",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
